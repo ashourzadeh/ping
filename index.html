@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html dir="rtl" lang="fa-IR">
+<head>
+  <title>Pinger</title>
+<link rel="icon" type="image/x-icon" href="img/favicon.ico">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body onload="pingallanten();pingalldvr();pingqati();pingallcam();">
+<div id="coolbala">
+<a id="acoolbala" href="insertpage.php"><img id="imgcoolbala" src="img/user.png"></a>
+<input type="text" id="shamsi-date" readonly><br><br>
+</div>
+
+
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 't1')">نمایش پینگ ها</button>
+  <button class="tablinks" onclick="openCity(event, 't2')">قطعی ها</button>
+  <button class="tablinks" onclick="openCity(event, 't3');pingshowreport();">گزارش گیری</button>
+</div>
+
+<div id="t1" class="tabcontent">
+	<div id="coll">
+	<div id="pinganten"></div>
+  <div id="pingdvr"></div>
+  <div id="pingcam"></div>
+	</div>
+</div>
+
+<div id="t2" class="tabcontent">
+	<div id="pingqati"></div>
+</div>
+
+<div id="t3" class="tabcontent">
+  <div id="pingreport"></div>
+</div>
+
+
+
+
+
+
+<!-- script for tab -->
+<script>
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+<!-- script for tab -->
+
+
+
+
+
+<script>
+setInterval(pingalldvr, 50000);
+setInterval(pingallanten, 60000);
+setInterval(pingallcam, 70000);
+
+function pingallanten(){
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+  document.getElementById("pinganten").innerHTML = this.responseText;
+  sortTable(3,'tblanten');
+}
+};
+str = "q=1";
+  xmlhttp.open("GET", "ping.php?" + str, true);
+  xmlhttp.send();
+}// pingallanten
+
+function pingalldvr(){
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+  document.getElementById("pingdvr").innerHTML = this.responseText;
+  sortTable(3,'tbldvr');
+}
+};
+str = "q=1";
+  xmlhttp.open("GET", "pingdvr.php?" + str, true);
+  xmlhttp.send();
+}//pingalldvr
+
+function pingallcam(){
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+  document.getElementById("pingcam").innerHTML = this.responseText;
+  sortTable(3,'tbldvr');
+}
+};
+str = "q=1";
+  xmlhttp.open("GET", "pingcam.php?" + str, true);
+  xmlhttp.send();
+}//pingallcam
+
+
+setInterval(pingqati, 80000);
+function pingqati(){
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+  document.getElementById("pingqati").innerHTML = this.responseText;
+}
+};
+str = "q=1";
+  xmlhttp.open("GET", "pingqat.php?" + str, true);
+  xmlhttp.send();
+}// pingallanten
+
+
+function pingshowreport(){
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+  document.getElementById("pingreport").innerHTML = this.responseText;
+
+  sortTable(5,'tblantenrep');
+}
+};
+str = "q=1";
+  xmlhttp.open("GET", "pingreport.php?" + str, true);
+  xmlhttp.send();
+}// pingallanten
+
+
+function sortTable(n,str) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById(str);
+  switching = true;
+  dir = "asc"; 
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      if (dir == "asc") {//asc
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {//desc
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount ++; 
+    } else {
+      if (switchcount == 0 && dir == "asc") {//asc
+        dir = "desc";//desc
+        switching = true;
+      }
+    }
+  }
+}
+
+</script>
+
+
+
+
+<!-- script of Date shamsi -->
+<script>
+setInterval(datetoshamsi, 1000);
+function datetoshamsi(){
+const gregorianDate = new Date();
+const shamsiDateInfo = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric', month: 'long', year: 'numeric' }).formatToParts(gregorianDate);
+const shamsiDate = `${shamsiDateInfo[2].value} ${shamsiDateInfo[4].value} ${shamsiDateInfo[0].value}`;
+////////////////////////////////////////
+const persianDateString = shamsiDate;
+const [persianMonthName, persianYear, persianDay] = persianDateString.split(' ');
+const formattedPersianDate = `${persianYear}/${persianMonthName}/${persianDay}`;
+/////////////////////////////////////////Time S
+const currentTime = new Date();
+const hours = currentTime.getHours();
+const minutes = currentTime.getMinutes();
+const secends = currentTime.getSeconds();
+const AllTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secends.toString().padStart(2, "0")}`;
+////////////////////////////////////////Time E
+const string = formattedPersianDate;
+// ماه به  نام و عدد _ توسط تابع  (replaceWith) عوض میشود که در صورت نیاز میتوانید حذف کنید
+const findMe = "اردیبهشت";
+const replaceWith = "۰٢";
+const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    //نام المنتی را که در آن نمایش داده شود را میتوانید با  (shamsi-date) جایگزین نمایید
+    } else {
+    const findMe = "خرداد";
+    const replaceWith = "۰۳";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "تیر";
+    const replaceWith = "۰۴";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "مرداد ";
+    const replaceWith = "۰۵";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "شهریور";
+    const replaceWith = "۰٦";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "مهر";
+    const replaceWith = "۰۷";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "آبان";
+    const replaceWith = "۰٨";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "آذر";
+    const replaceWith = "۰٩";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "دی";
+    const replaceWith = "۱۰";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "بهمن";
+    const replaceWith = "۱۱";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "اسفند";
+    const replaceWith = "۱۲";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+    const findMe = "فروردین";
+    const replaceWith = "۰۱";
+    const index = string.indexOf(findMe);
+    if (index!== -1) {
+    const newString = string.replace(findMe, replaceWith);
+    document.getElementById("shamsi-date").value = newString + " - " + AllTime;
+    } else {
+       /////////////////ماه مورد نظر درست وارد نشده است///////////////
+    }//not "فروردین "
+    }//not "اسفند "
+    }//not "بهمن "
+    }//not "دی "
+    }//not "آذر "
+    }//not "آبان "
+    }//not "مهر "
+    }//not "شهریور "
+    }//not "مرداد "
+    }//not "تیر "
+    }//not "خرداد "
+    }//not "اردیبهشت "
+}//datetoshamsi END
+</script>
+<!-- script of Date shamsi -->
+
+
+
+
+
+
+
+<style>
+@font-face {
+  font-family: 'aseman';
+  src: url('font/aseman.ttf'); 
+}
+@font-face {
+  font-family: 'Aref';
+  src: url('font/Aref.ttf'); 
+}
+@font-face {
+  font-family: 'TrafficB';
+  src: url('font/TrafficB.ttf'); 
+}
+@font-face {
+  font-family: 'Traffic';
+  src: url('font/Traffic.ttf'); 
+}
+@font-face {
+  font-family: 'Yekan';
+  src: url('font/Yekan.ttf'); 
+}
+@font-face {
+  font-family: 'SGbold';
+  src: url('font/SGKara-SemiBold.ttf'); 
+}
+@font-face {
+  font-family: 'SGLight';
+  src: url('font/SGKara-Light.ttf'); 
+}
+@font-face {
+  font-family: 'EstedadB';
+  src: url('font/Estedad-Bold.ttf'); 
+}
+@font-face {
+  font-family: 'Lalezar';
+  src: url('font/Lalezar-Regular.ttf'); 
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+html,body {
+    font-family: 'EstedadB';
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+
+#antenfild, #dvrfild, #camfild {
+    border: 1px solid #ededed;
+    background-color: #efefef;
+    border-radius: 15px;
+    width: 100%;
+}
+
+#insidediv {
+    width: fit-content;
+    height: 50px;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+}
+.icofildset {
+    width: 5%;
+    margin-left: 10px;
+}
+.icofildsetdvr {
+    width: 25%;
+    margin-left: 10px;
+}
+.icofildsetcam {
+    width: 9%;
+    margin-left: 10px;
+}
+#antenfild hr {
+    border: 1px solid #d7d7d7;
+    border-radius: 50px;
+}
+.cheraq {
+    width: 15px;
+    height: 15px;
+    display: block;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+.divips {
+	width: fit-content;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+#insidediv h3 {
+    font-family: 'EstedadB';
+}
+
+
+
+#tblanten {
+    text-align: center;
+    width: 100%;
+}
+thead {
+    background-color: #fff;
+}
+thead, td {
+  text-align: left;
+  padding: 1px;
+  font-weight: bold;
+  text-align: center;
+  font-family: 'EstedadB';
+  width: 1%;
+  overflow: hidden;
+}
+
+tr:nth-child(even){background-color: #bba8a81f}
+
+
+tr:hover {background-color: #ddd;}
+
+
+
+#coll {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    margin: 0 auto;
+    gap: 15px;
+    justify-content: space-around;
+    overflow: hidden;
+}
+#pinganten, #pingdvr, #pingcam {
+    width: 100%;
+    display: block;
+}
+
+
+#shamsi-date {
+    font-family: 'b yekan';
+    direction: ltr;
+    width: fit-content;
+    padding: 8px;
+    outline: none;
+    border: 1px solid #000;
+    border-right: 0;
+    border-left: 0;
+    border-top: 0;
+    border-radius: 10px;
+    margin: 10px;
+}
+#shamsi-date:focus-visible {
+    outline: none;
+}
+
+
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  display: flex;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+  font-family: 'EstedadB';
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+
+#pingqati {
+    font-family: 'b yekan';
+}
+
+#tarikhtd {
+    font-family: 'yekan';
+    direction: ltr;
+}
+
+#coolbala {
+    width: 100%;
+    height: 50px;
+    overflow: hidden;
+    display: flex;
+}
+#acoolbala {
+    display: block;
+    width: 10%;
+}
+#imgcoolbala {
+    width: 70px;
+    height: 50px;
+}
+
+</style>
+
+</body>
+</html> 
